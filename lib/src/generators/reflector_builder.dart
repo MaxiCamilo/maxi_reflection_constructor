@@ -1,0 +1,85 @@
+import 'dart:async';
+
+import 'package:maxi_framework/maxi_framework.dart';
+import 'package:maxi_reflection_constructor/src/analyzer/file_analizer.dart';
+import 'package:maxi_reflection_constructor/src/analyzer/folder_reflected_file_finder.dart';
+import 'package:maxi_reflection_constructor/src/writers/album_generator.dart';
+import 'package:maxi_reflection_constructor/src/writers/file_reflector_writter.dart';
+
+class ReflectorBuilder with FunctionalityMixin<void> {
+  final String prefix;
+  final Functionality<List<FileOperator>>? searcher;
+  final FolderReference? destination;
+
+  final Iterable<String> extraImports;
+
+  const ReflectorBuilder({required this.prefix, this.searcher, this.destination, this.extraImports = const []});
+
+  @override
+  Future<Result<void>> runFuncionality() async {
+    final appInitializationResult = await ApplicationManager.defineSingleton(DartApplicationManager());
+    if (appInitializationResult.itsFailure) return appInitializationResult.cast();
+
+    final projectAddressResult = await DartLocalRouteDefiner(isDebug: false, useWorkingPathInDebug: true).execute();
+    if (projectAddressResult.itsFailure) return projectAddressResult.cast();
+    final projectAddress = projectAddressResult.content;
+
+    late final Functionality<List<FileOperator>> realSeacher;
+    if (searcher == null) {
+      realSeacher = FolderReflectedFileFinder(folderAddress: FolderReference.interpretRoute(route: projectAddress, isLocal: false).content);
+    } else {
+      realSeacher = searcher!;
+    }
+
+    late final FolderReference realDestination;
+    if (destination == null) {
+      final realDestinationResult = FolderReference.interpretRoute(route: '$projectAddress/lib/src/reflection', isLocal: false);
+      if (realDestinationResult.itsFailure) return realDestinationResult.cast();
+      realDestination = realDestinationResult.content;
+    } else {
+      realDestination = destination!;
+    }
+
+    final generatedFolder = FolderReference.fromAnotherFolder(parent: realDestination, name: 'generated');
+    final generatedForlderOperator = ApplicationManager.singleton.buildFolderOperator(generatedFolder);
+    final generatedFolderCreation = await generatedForlderOperator.create();
+    if (generatedFolderCreation.itsFailure) return generatedFolderCreation.cast();
+
+    final filesResult = await realSeacher.execute();
+    if (filesResult.itsFailure) return filesResult.cast();
+
+    if (filesResult.content.isEmpty) {
+      return NegativeResult.controller(
+        code: ErrorCode.nonExistent,
+        message: FixedOration(message: 'No reflected classes found'),
+      );
+    }
+
+    final newReflectedFile = <FileReflectorWritterResult>[];
+
+    for (final file in filesResult.content) {
+      final analizerResult = await FileAnalizer(fileName: file.fileReference.nameWithoutExtension, fileGetter: file.readText).execute();
+      if (analizerResult.itsFailure) return analizerResult.cast();
+      if (analizerResult.content == null) continue;
+      if (analizerResult.content!.classList.isEmpty && analizerResult.content!.enumList.isEmpty) continue;
+
+      final fileWritterResult = await FileReflectorWritter(
+        prefix: prefix,
+        destinationFolder: generatedFolder,
+        analizerContent: analizerResult.content!,
+        initialImportAddress: 'generated',
+        extraImports: extraImports,
+      ).execute();
+      if (fileWritterResult.itsFailure) return fileWritterResult.cast();
+      if (fileWritterResult.content != null) {
+        newReflectedFile.add(fileWritterResult.content!);
+      }
+    }
+
+    final albumGenerator = AlbumGenerator(files: newReflectedFile, prefix: prefix, folderDestination: realDestination, folderClassAddress: 'generated', extraImports: extraImports);
+    final albumGenerationResult = await albumGenerator.execute();
+    if (albumGenerationResult.itsFailure) return albumGenerationResult.cast();
+
+    return voidResult;
+  }
+}
