@@ -1,5 +1,5 @@
 name: maxi_reflection_constructor
-description: A starting point for Dart libraries or applications.
+description: Separate library from the reflectors; it is used to examine a project, detect classes, and build the reflectors. Priority is given to keeping the generated structure constant and static.
 version: 1.0.0
 publish_to: none
 # repository: https://github.com/my_org/my_repo
