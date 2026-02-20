@@ -10,8 +10,6 @@ import 'package:test/test.dart';
 void main() {
   group('Test builder', () {
     setUp(() async {
-      final appInitializationResult = await ApplicationManager.defineSingleton(DartApplicationManager());
-      if (appInitializationResult.itsFailure) throw appInitializationResult.error;
     });
 
     test('Dart File Finder', () async {

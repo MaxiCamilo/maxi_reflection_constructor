@@ -9,11 +9,11 @@ class FolderReflectedFileFinder with FunctionalityMixin<List<FileOperator>> {
 
   @override
   Future<Result<List<FileOperator>>> runFuncionality() async {
-    final folderInstance = ApplicationManager.singleton.buildFolderOperator(folderAddress);
+    final folderInstance = folderAddress.buildOperator();
     final fileList = <FileOperator>[];
 
     await for (final file in folderInstance.obtainFiles().where((file) => file.nameExtension == 'dart')) {
-      final fileOperator = ApplicationManager.singleton.buildFileOperator(file);
+      final fileOperator = file.buildOperator();
       fileList.add(fileOperator);
     }
 

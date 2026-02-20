@@ -30,7 +30,7 @@ class FileReflectorWritter with FunctionalityMixin<FileReflectorWritterResult?> 
 
     final newFileName = '${analizerContent.fileName}.g.dart';
     final fileDirection = FileReference.fromFolder(folder: destinationFolder, name: newFileName);
-    final fileWritter = ApplicationManager.singleton.buildFileOperator(fileDirection);
+    final fileWritter = fileDirection.buildOperator();
 
     final fileCreationResult = await fileWritter.create();
     if (fileCreationResult.itsFailure) return fileCreationResult.cast();

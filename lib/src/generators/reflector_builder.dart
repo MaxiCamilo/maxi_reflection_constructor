@@ -17,10 +17,7 @@ class ReflectorBuilder with FunctionalityMixin<void> {
 
   @override
   Future<Result<void>> runFuncionality() async {
-    final appInitializationResult = await ApplicationManager.defineSingleton(DartApplicationManager());
-    if (appInitializationResult.itsFailure) return appInitializationResult.cast();
-
-    final projectAddressResult = await DartLocalRouteDefiner(isDebug: false, useWorkingPathInDebug: true).execute();
+    final projectAddressResult = await FolderReference.workingFolder.buildOperator().obtainCompleteRoute();
     if (projectAddressResult.itsFailure) return projectAddressResult.cast();
     final projectAddress = projectAddressResult.content;
 
@@ -41,7 +38,7 @@ class ReflectorBuilder with FunctionalityMixin<void> {
     }
 
     final generatedFolder = FolderReference.fromAnotherFolder(parent: realDestination, name: 'generated');
-    final generatedForlderOperator = ApplicationManager.singleton.buildFolderOperator(generatedFolder);
+    final generatedForlderOperator = generatedFolder.buildOperator();
     final generatedFolderCreation = await generatedForlderOperator.create();
     if (generatedFolderCreation.itsFailure) return generatedFolderCreation.cast();
 
