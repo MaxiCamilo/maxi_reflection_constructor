@@ -14,7 +14,7 @@ class AlbumGenerator with FunctionalityMixin<void> {
   const AlbumGenerator({required this.files, required this.prefix, required this.folderDestination, required this.folderClassAddress, required this.extraImports});
 
   @override
-  Future<Result<void>> runFuncionality() async {
+  Future<Result<void>> runInternalFuncionality() async {
     final buffer = StringBuffer('import \'package:maxi_reflection/maxi_reflection.dart\';\n');
 
     for (final imp in files) {

@@ -25,7 +25,7 @@ class FileReflectorWritter with FunctionalityMixin<FileReflectorWritterResult?> 
   FileReflectorWritter({required this.analizerContent, required this.destinationFolder, required this.prefix, required this.initialImportAddress, required this.extraImports});
 
   @override
-  Future<Result<FileReflectorWritterResult?>> runFuncionality() async {
+  Future<Result<FileReflectorWritterResult?>> runInternalFuncionality() async {
     if (analizerContent.classList.isEmpty && analizerContent.enumList.isEmpty) return nullResult<FileReflectorWritterResult>();
 
     final newFileName = '${analizerContent.fileName}.g.dart';

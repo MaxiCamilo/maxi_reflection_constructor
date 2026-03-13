@@ -16,7 +16,7 @@ class ReflectorBuilder with FunctionalityMixin<void> {
   const ReflectorBuilder({required this.prefix, this.searcher, this.destination, this.extraImports = const []});
 
   @override
-  Future<Result<void>> runFuncionality() async {
+  Future<Result<void>> runInternalFuncionality() async {
     final projectAddressResult = await FolderReference.workingFolder.buildOperator().obtainCompleteRoute();
     if (projectAddressResult.itsFailure) return projectAddressResult.cast();
     final projectAddress = projectAddressResult.content;

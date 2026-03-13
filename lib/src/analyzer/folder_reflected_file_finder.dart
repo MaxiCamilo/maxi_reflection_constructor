@@ -8,7 +8,7 @@ class FolderReflectedFileFinder with FunctionalityMixin<List<FileOperator>> {
   const FolderReflectedFileFinder({required this.folderAddress});
 
   @override
-  Future<Result<List<FileOperator>>> runFuncionality() async {
+  Future<Result<List<FileOperator>>> runInternalFuncionality() async {
     final folderInstance = folderAddress.buildOperator();
     final fileList = <FileOperator>[];
 

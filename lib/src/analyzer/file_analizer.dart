@@ -23,7 +23,7 @@ class FileAnalizer with FunctionalityMixin<FileAnalizerResult?> {
   const FileAnalizer({required this.fileName, required this.fileGetter});
 
   @override
-  Future<Result<FileAnalizerResult?>> runFuncionality() async {
+  Future<Result<FileAnalizerResult?>> runInternalFuncionality() async {
     final fileGetterResult = await fileGetter().connect();
     if (fileGetterResult.itsFailure) return fileGetterResult.cast();
 
