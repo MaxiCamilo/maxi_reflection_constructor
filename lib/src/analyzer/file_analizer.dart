@@ -24,7 +24,7 @@ class FileAnalizer with FunctionalityMixin<FileAnalizerResult?> {
 
   @override
   Future<Result<FileAnalizerResult?>> runInternalFuncionality() async {
-    final fileGetterResult = await fileGetter().connect();
+    final fileGetterResult = await fileGetter();
     if (fileGetterResult.itsFailure) return fileGetterResult.cast();
 
     final fileContent = fileGetterResult.content;
