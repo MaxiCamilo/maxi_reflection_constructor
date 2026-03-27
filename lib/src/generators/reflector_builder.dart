@@ -20,26 +20,28 @@ class ReflectorBuilder with FunctionalityMixin<void> {
     final projectAddressResult = await FolderReference.workingFolder.buildOperator().obtainCompleteRoute();
     if (projectAddressResult.itsFailure) return projectAddressResult.cast();
     final projectAddress = projectAddressResult.content;
+    FolderReference mainFolder = FolderReference.interpretRoute(route: projectAddress, isLocal: false).content;
+    if (appManager.isDebug && mainFolder.name == 'debug') {
+      mainFolder = mainFolder.obtainFolderLocation().content;
+    }
 
     late final Functionality<List<FileOperator>> realSeacher;
     if (searcher == null) {
-      realSeacher = FolderReflectedFileFinder(folderAddress: FolderReference.interpretRoute(route: projectAddress, isLocal: false).content);
+      realSeacher = FolderReflectedFileFinder(folderAddress: mainFolder);
     } else {
       realSeacher = searcher!;
     }
 
     late final FolderReference realDestination;
     if (destination == null) {
-      final realDestinationResult = FolderReference.interpretRoute(route: '$projectAddress/lib/src/reflection', isLocal: false);
-      if (realDestinationResult.itsFailure) return realDestinationResult.cast();
-      realDestination = realDestinationResult.content;
+      realDestination = FolderReference.pulledFolder(parent: mainFolder, route: 'lib/src/reflection');
     } else {
       realDestination = destination!;
     }
 
     final generatedFolder = FolderReference.fromAnotherFolder(parent: realDestination, name: 'generated');
     final generatedForlderOperator = generatedFolder.buildOperator();
-    final generatedFolderCreation = await generatedForlderOperator.create();
+    final generatedFolderCreation = await generatedForlderOperator.create(createFolderRoute: true);
     if (generatedFolderCreation.itsFailure) return generatedFolderCreation.cast();
 
     final filesResult = await realSeacher.execute();
