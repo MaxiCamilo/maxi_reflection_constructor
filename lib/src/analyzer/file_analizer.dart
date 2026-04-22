@@ -6,14 +6,16 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection_constructor/maxi_reflection_constructor.dart';
+import 'package:maxi_reflection_constructor/src/analyzer/search_compatible_unreflective_types.dart';
 
 class FileAnalizerResult {
   final String fileName;
   final Set<String> imports;
   final List<DetectedClass> classList;
   final List<DetectedEnum> enumList;
+  final UnreflectiveTypesResult unreflectiveTypes;
 
-  const FileAnalizerResult({required this.fileName, required this.imports, required this.classList, required this.enumList});
+  const FileAnalizerResult({required this.fileName, required this.imports, required this.classList, required this.enumList, required this.unreflectiveTypes});
 }
 
 class FileAnalizer with FunctionalityMixin<FileAnalizerResult?> {
@@ -56,8 +58,11 @@ class FileAnalizer with FunctionalityMixin<FileAnalizerResult?> {
 
     if (checkVisitException.itsFailure) return checkVisitException.cast();
 
+    final unreflectiveTypesResult = SearchCompatibleUnreflectiveTypes(classList: visitor.classList, enumList: visitor.enumList).execute();
+    if (unreflectiveTypesResult.itsFailure) return unreflectiveTypesResult.cast();
+
     return ResultValue(
-      content: FileAnalizerResult(fileName: fileName, classList: visitor.classList, enumList: visitor.enumList, imports: visitor.imports),
+      content: FileAnalizerResult(fileName: fileName, classList: visitor.classList, enumList: visitor.enumList, imports: visitor.imports, unreflectiveTypes: unreflectiveTypesResult.content),
     );
   }
 }

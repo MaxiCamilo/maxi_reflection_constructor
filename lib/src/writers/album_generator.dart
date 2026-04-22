@@ -16,6 +16,7 @@ class AlbumGenerator with FunctionalityMixin<void> {
   @override
   Future<Result<void>> runInternalFuncionality() async {
     final buffer = StringBuffer('import \'package:maxi_reflection/maxi_reflection.dart\';\n');
+    buffer.writeln('import \'generated/unreflective_types.g.dart\';\n');
 
     for (final imp in files) {
       buffer.writeln('import \'${imp.importAddress}\';');
@@ -46,7 +47,7 @@ class AlbumGenerator with FunctionalityMixin<void> {
     buffer.writeln('\t\t];');
     buffer.writeln('\t}');
 
-    buffer.writeln('\t@override\n\tList<ReflectedType> buildOtherReflectors({required ReflectionManager manager}) => const [];');
+    buffer.writeln('\t@override\n\tList<ReflectedType> buildOtherReflectors({required ReflectionManager manager}) => unreflectiveTypesList;');
 
     buffer.writeln('}');
 

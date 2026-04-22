@@ -4,7 +4,6 @@ library;
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection_constructor/maxi_reflection_constructor.dart';
 import 'package:maxi_reflection_constructor/src/analyzer/file_analizer.dart';
-import 'package:maxi_reflection_constructor/src/analyzer/folder_reflected_file_finder.dart';
 import 'package:test/test.dart';
 
 void main() {

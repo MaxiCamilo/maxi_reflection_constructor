@@ -1,5 +1,6 @@
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection_constructor/maxi_reflection_constructor.dart';
+import 'package:maxi_reflection_constructor/src/writers/logic/search_indicate_operator.dart';
 
 class FieldToReflectedDartFile implements SyncFunctionality<(String, String)> {
   final DetectedClass parentClass;
@@ -26,7 +27,13 @@ class FieldToReflectedDartFile implements SyncFunctionality<(String, String)> {
     buffer.writeln('\t\tisStatic: ${processedField.isStatic ? 'true' : 'false'},');
     buffer.writeln('\t\tisFinal: ${processedField.isFinal || processedField.isConst ? 'true' : 'false'},');
     buffer.writeln('\t\tisLate: ${processedField.isLate ? 'true' : 'false'},');
-    buffer.writeln('\t\treflectedType: ReflectedFlexible(externalAnotations: annotations, manager: manager, realType: ${processedField.typeValue}),');
+
+    final searchIndicateOper = SearchIndicateOperator(realType: processedField.typeValue).execute();
+    if (searchIndicateOper.itsFailure) {
+      return searchIndicateOper.cast();
+    }
+
+    buffer.writeln('\t\treflectedType: ${searchIndicateOper.content},');
 
     buffer.writeln('\t\tgetter: (${parentClass.name}? instance) => ${processedField.isConst || processedField.isStatic ? '${parentClass.name}.${processedField.name}' : 'instance!.${processedField.name}'},');
 
