@@ -45,7 +45,7 @@ class UnreflectiveTypesToDartFile with FunctionalityMixin<void> {
 
     buffer.writeln();
 
-    buffer.writeln('const unreflectiveTypesList = [${names.join(', ')}];');
+    buffer.writeln('const unreflectiveTypesList = <ReflectedType>[${names.join(', ')}];');
 
     final fileWritter = unreflectiveFile.buildOperator();
     final fileCreationResult = await fileWritter.create();
